@@ -24,5 +24,6 @@ public class User {
     @Email
     private String email;
     private Instant time;
-
+    private Instant created;
+    private boolean enabled;
 }
