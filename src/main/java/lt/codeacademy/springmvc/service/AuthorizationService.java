@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.time.Instant.now;
@@ -54,5 +55,18 @@ public class AuthorizationService {
         return passwordEncoder.encode(password);
     }
 
+    public void verifyAccount(String token) {
+        Optional<Verification> verificationOptional = verificationRepository.findByToken(token);
+        verificationOptional.orElseThrow(() -> new SpringException("Invalid Token"));
+        fetchUserAndEnable(verificationOptional.get());
+    }
+
+    @Transactional
+    private void fetchUserAndEnable(Verification verification) {
+        String username = verification.getUser().getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringException("User Not Found with id - " + username));
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 
 }
