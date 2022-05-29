@@ -1,5 +1,6 @@
-package lt.codeacademy.springmvc.repository.entity;
+package lt.codeacademy.springmvc.repository;
 
+import lt.codeacademy.springmvc.repository.entity.Verification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
