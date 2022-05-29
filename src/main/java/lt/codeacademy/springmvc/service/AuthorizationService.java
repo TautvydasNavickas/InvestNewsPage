@@ -1,6 +1,7 @@
 package lt.codeacademy.springmvc.service;
 
 import lt.codeacademy.springmvc.DTO.RegisterRequest;
+import lt.codeacademy.springmvc.exception.InvestAccountNotFoundException;
 import lt.codeacademy.springmvc.repository.UserRepository;
 import lt.codeacademy.springmvc.repository.VerificationRepository;
 import lt.codeacademy.springmvc.repository.entity.User;
@@ -57,14 +58,14 @@ public class AuthorizationService {
 
     public void verifyAccount(String token) {
         Optional<Verification> verificationOptional = verificationRepository.findByToken(token);
-        verificationOptional.orElseThrow(() -> new SpringException("Invalid Token"));
+        verificationOptional.orElseThrow(() -> new InvestAccountNotFoundException("Invalid Token"));
         fetchUserAndEnable(verificationOptional.get());
     }
 
     @Transactional
     private void fetchUserAndEnable(Verification verification) {
         String username = verification.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringException("User Not Found with id - " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new InvestAccountNotFoundException("User Not Found with id - " + username));
         user.setEnabled(true);
         userRepository.save(user);
     }
