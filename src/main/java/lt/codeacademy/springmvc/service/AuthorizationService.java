@@ -1,11 +1,14 @@
 package lt.codeacademy.springmvc.service;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lt.codeacademy.springmvc.DTO.RegisterRequest;
 import lt.codeacademy.springmvc.exception.InvestAccountNotFoundException;
 import lt.codeacademy.springmvc.repository.UserRepository;
 import lt.codeacademy.springmvc.repository.VerificationRepository;
 import lt.codeacademy.springmvc.repository.entity.User;
 import lt.codeacademy.springmvc.repository.entity.Verification;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,14 @@ import java.util.UUID;
 import static java.time.Instant.now;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class AuthorizationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationRepository verificationRepository;
+    private final MailService mailService;
 
     public AuthorizationService(UserRepository userRepository, PasswordEncoder passwordEncoder, VerificationRepository verificationRepository) {
         this.userRepository = userRepository;
