@@ -10,11 +10,3 @@ services:
       MYSQL_DATABASE: investpage
       MYSQL_USER: invest
       MYSQL_PASSWORD: password
-postgres:
-  image: postgres
-  restart: always
-  environment:
-    POSTGRES_PASSWORD: example
-    POSTGRES_DB: invest
-  ports:
-    - "5432:5432"
