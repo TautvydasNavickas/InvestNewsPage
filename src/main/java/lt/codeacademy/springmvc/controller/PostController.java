@@ -1,6 +1,9 @@
 package lt.codeacademy.springmvc.controller;
 
 import lombok.AllArgsConstructor;
+import lt.codeacademy.springmvc.DTO.PostRequest;
+import lt.codeacademy.springmvc.DTO.PostResponse;
+import lt.codeacademy.springmvc.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,12 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
-
+@RestController
+@RequestMapping("/api/posts/")
+@AllArgsConstructor
 public class PostController {
-    @RestController
-    @RequestMapping("/api/posts/")
-    @AllArgsConstructor
-    public class PostController {
+
 
         private final PostService postService;
 
@@ -43,4 +45,4 @@ public class PostController {
             return status(HttpStatus.OK).body(postService.getPostsByUsername(username));
         }
     }
-}
+

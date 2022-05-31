@@ -10,13 +10,18 @@ import lt.codeacademy.springmvc.exception.InvestAccountNotFoundException;
 import lt.codeacademy.springmvc.repository.UserRepository;
 import lt.codeacademy.springmvc.repository.VerificationRepository;
 import lt.codeacademy.springmvc.repository.entity.EmailNotification;
+
 import lt.codeacademy.springmvc.repository.entity.User;
 import lt.codeacademy.springmvc.repository.entity.Verification;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -51,13 +56,23 @@ public class AuthorizationService {
 
         userRepository.save(user);
 
-        log.info("User Registered Successfully, Sending Authentication Email");
         String token = generateVerificationToken(user);
-        String message = mailMessageContentService.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
+        String message = mailMessageContentService.build("Thank you for signing up to Investpage, please click on the below url to activate your account : "
                 + ACTIVATION_EMAIL + "/" + token);
 
         sendingMailService.sendMail(new EmailNotification("Please Activate your account", user.getEmail(), message));
     }
+
+    @Transactional
+    public User getCurrentUser() {
+        Jwt principal = (Jwt) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername((String) principal.getSubject())
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getSubject()));
+    }
+
+
+
 
     private String generateVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
@@ -93,5 +108,8 @@ public class AuthorizationService {
         user.setEnabled(true);
         userRepository.save(user);
     }
-
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
 }
